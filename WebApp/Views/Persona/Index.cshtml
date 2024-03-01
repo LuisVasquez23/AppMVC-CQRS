@@ -1,0 +1,63 @@
+﻿@{
+    ViewData["Title"] = "Persona";
+
+    var personas = ViewBag.ListPersonas;
+}
+
+<h2>Personas</h2>
+
+<a class="btn btn-success" asp-action="Crear" asp-controller="Persona">Agregar</a>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre</th>
+            <th>Apellido</th>
+            <th>Email</th>
+            <th>Fecha de Nacimiento</th>
+            <th>Accion</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach ( var persona in personas)
+        {
+            <tr>
+                <td>@persona.Nombre</td>
+                <td>@persona.Apellido</td>
+                <td>@persona.Email</td>
+                <td>@persona.FechaNacimiento</td>
+                <td>
+                    <div class="btn-group">
+                        @Html.ActionLink("Editar", "Editar", "Persona", new { IdPersona = persona.IdPersona }, new { @class = "btn btn-primary" })
+                        <form method="post" asp-action="Eliminar" asp-controller="Persona" id="deleteForm-@persona.IdPersona">
+                            <input type="hidden" value="@persona.IdPersona" name="IdPersona" />
+                            <button type="button" class="btn btn-danger" onclick="DeletePersonaEvent(@persona.IdPersona)">Eliminar</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@inject Microsoft.AspNetCore.Antiforgery.IAntiforgery Xsrf
+@functions {
+	public string? GetAntiXsrfRequestToken() {
+		return Xsrf.GetAndStoreTokens(Context).RequestToken;
+	}
+}
+
+@section Scripts {
+    <script src="~/js/Equipos.js"></script>
+
+
+    @if (TempData["mensaje"] != null)
+    {
+        <script>
+            let mensaje = '@TempData["mensaje"]';
+            let estado = '@TempData["estado"]';
+            MessageAlert(mensaje, estado);
+        </script>
+    }
+
+}
